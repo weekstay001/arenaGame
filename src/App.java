@@ -57,7 +57,7 @@ public class App {
         // crit, and what cast casts
         double critDamage = damage * 1.75;
         int applied = (int) critDamage;
-        System.out.println("Crit! " + applied + " damage.");
+        System.out.println("Lost to the cast: " + (critDamage - applied));
 
     }
 
