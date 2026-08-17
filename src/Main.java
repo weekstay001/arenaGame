@@ -33,8 +33,15 @@ public class Main {
         // Note System.out.print, not println — the text block already
         // ends with a newline. Use YOUR game's name.
 
-        System.out.println("The arena awaits.");
-        System.out.println("Sand, torchlight, and a crowd that has already decided how this ends.");
+        String title = """
+                ~~~~~~~~~~~~~~~~~~~~~
+                THE ZONE
+                ~~~~~~~~~~~~~~~~~~~~~
+                """;
+                System.out.print(title);
+
+        System.out.println("The zone awaits.");
+        System.out.println("gravel, swinging lamp, and a crowd that has already decided how this ends.");
         System.out.println("The gate opens.");
         System.out.println("");
 
@@ -86,6 +93,13 @@ public class Main {
         // NEVER ==. On Strings, == asks "are these the same object in
         // memory," which is the wrong question and only works by
         // accident. This is the single most common Java bug there is.
+
+        
+        System.out.println(enemyName.toUpperCase() + " blocks your path!");
+        System.out.println("Name length: " + enemyName.length());
+
+        boolean isBoss = enemyName.contains("Dragon");
+
         System.out.println("Opponent: " + enemyName);
         System.out.println("Health: " + enemyHealth);
         System.out.println("Power: " + enemyPower);
@@ -113,6 +127,8 @@ public class Main {
         // TODO 1b: these two print 42.857142857142854, which no player should
         // ever see. Replace them with printf and %.1f%% so they read
         // 42.9%. Same numbers — this is what printf is FOR.
+        System.out.printf("Accuracy (cast):    %.1f%%%n", acc1);
+        System.out.printf("Accuracy (reorder): %.1f%%%n", acc2);
         System.out.println("Accuracy (cast):    " + acc1 + "%");
         System.out.println("Accuracy (reorder): " + acc2 + "%");
         System.out.println("");
@@ -141,6 +157,15 @@ public class Main {
         // IllegalArgumentException, because you can't repeat something
         // a negative number of times. Try it. The real fix is an if,
         // and that is Lesson 6 — for now just SEE it break.
+
+        int bars = health / 5; 
+        String bar = "#".repeat(bars) + "-".repeat(20 - bars);
+        System.out.printf("[%s] %d%%%n", bar, health);
+
+        // TODO clamp health between 0 and MAX_HEALTH
+
+
+
 
     }
 }
