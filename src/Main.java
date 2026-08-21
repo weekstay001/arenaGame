@@ -1,24 +1,3 @@
-/*
- * U1 L5 — SCANNER INPUT AND PSEUDOCODE · STARTER CODE
- * 7184 Software Development · Unit 1, Lesson 5
- *
- * ALREADY HERE:  Lessons 1–4 finished — the title screen, the formatted status
- *                line, String methods, combat math, the health bar.
- * YOU'RE ADDING: pseudocode first, then a Scanner so the game asks the player
- *                questions instead of hard-coding the answers.
- *
- *     javac Main.java
- *     java Main
- *
- * DESIGN BEFORE YOU TYPE. Part 1 is written English, not Java. Everyone wants
- * to skip it. The people who skip it write the nextLine() bug and then spend
- * twenty minutes not understanding why the program refuses to stop.
- */
-
-// TODO 2a: import the Scanner class. It is not built in like System is.
-//          This line goes at the VERY TOP of the file, above `public class`:
-//
-//              import java.util.Scanner;
 
 import java.util.Scanner;
 
@@ -29,44 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        /*
-         * TODO 1: PSEUDOCODE — the design, in English, before any Java.
-         *
-         *   Write out what the program will ASK for and what it will DO with
-         *   each answer. Use plain words in capitals for the decisions:
-         *   ASK, IF, SET, SHOW, REPEAT UNTIL.
-         *
-         *   Mine looks like this — yours should match YOUR game:
-         *
-         *       ASK for the player's name
-         *       IF the name is blank
-         *           USE "Challenger" instead
-         *       ASK for difficulty 1-3
-         *       SET enemy health based on difficulty
-         *       SHOW a summary and wait for Enter
-         *
-         *   Leave it here as a comment when you're done. It is part of what
-         *   you turn in, and in six weeks it is how you'll remember what this
-         *   file was supposed to do.
-         * 
-         * ASK for the player's name
-         * IF the name is blank 
-         * USE "Fighter" instead
-         * ASK for difficulty 1-3
-         * SET enemy health based on diffficulty
-         * SHOW A summary and wait for enter
-         * 
-         * ASK for players weapon type (Sword, bow, magic)
-         * IF the type is blank(Default to sword)
-         * UPDATE damage based on weapon type
-         */
-
-
-
-        // TODO 2b: make the Scanner, once, here at the top of main:
-        //
-        //              Scanner in = new Scanner(System.in);
-
+        
         Scanner in = new Scanner(System.in);
 
         String title = """
@@ -80,46 +22,23 @@ public class Main {
         System.out.println("The gate opens.");
         System.out.println("");
 
-        // TODO 3a: ask for the player's name instead of hard-coding it.
-        //
-        //              System.out.print("What is your name, challenger? ");
-        //              String playerName = in.nextLine().trim();
-        //
-        //          .trim() removes stray spaces. Then handle the blank answer
-        //          your pseudocode planned for — .isEmpty() tells you.
-        //          Delete the hard-coded line below once yours works.
-
+        
         System.out.print("What is your name, fighter?");
         String playerName = in.nextLine().trim(); // just trims off the excess spaces
-        if (playerName.isEmpty()){
-            playerName  = "Fighter";
+        if (playerName.isEmpty()) {
+            playerName = "Fighter";
         }
 
         System.out.print("What is your weapon of choice, " + playerName + "? (1 = sword, 2 = bow, 3 = magic");
         int weapon = in.nextInt();
         in.nextLine();
 
-
-        // TODO 3b: ask for a difficulty from 1 to 3 with in.nextInt(), then
-        //          use it to scale the enemy — enemyHealth and enemyPower
-        //          below should be worked out FROM difficulty, not fixed.
-        //
-        //          THE BUG EVERYONE HITS: nextInt() takes the number and
-        //          leaves the Enter keypress sitting in the buffer. The next
-        //          nextLine() then reads that leftover newline and returns
-        //          immediately. Fix it with one bare line right after:
-        //
-        //              int difficulty = in.nextInt();
-        //              in.nextLine();   // consume the leftover newline
-        //
-        //          Write that comment on it. You will meet this bug again.
-
+        
         System.out.print("Difficulty (1 = easy, 2 = normal, 3 = brutal); Enter to begim");
         int difficulty = in.nextInt();
-          // consume the leftover newline
-         in.nextLine()
-        //Ask --> print + read
-
+        // consume the leftover newline
+        in.nextLine();
+        // Ask --> print + read
 
         int health = MAX_HEALTH;
         int gold = STARTING_GOLD;
@@ -132,20 +51,15 @@ public class Main {
         int enemyPower = 4 + difficulty * 3;
 
         System.out.printf("%-12s HP %3d/%3d  Gold %4d  Lv %d%n",
-                          playerName, health, MAX_HEALTH, gold, level);
+                playerName, health, MAX_HEALTH, gold, level);
         System.out.printf("Alive %-5b  Crit %.0f%%%n", alive, critChance * 100);
         System.out.println("");
 
-        // TODO 3c: a summary line, then wait for the player to press Enter:
-        //
-        //              System.out.printf("%s enters the arena. The %s has %d HP.%n",
-        //                                playerName, enemyName, enemyHealth);
-        //              System.out.print("Press Enter to begin...");
-        //              in.nextLine();
+        
 
         System.out.println(enemyName.toUpperCase() + " blocks your path!");
         System.out.printf("Opponent %-14s HP %3d  Power %2d%n",
-                          enemyName, enemyHealth, enemyPower);
+                enemyName, enemyHealth, enemyPower);
         System.out.println("Name length: " + enemyName.length());
 
         boolean isBoss = enemyName.contains("Dragon");
@@ -156,9 +70,9 @@ public class Main {
         }
         System.out.println("");
 
-        int damage = enemyPower * 2;
-        health -= damage;
-        System.out.println("You take " + damage + " damage. Health: " + health);
+        int Playerdamage = enemyPower * 2;
+        health -= Playerdamage;
+        System.out.println("You take " + Playerdamage + " damage. Health: " + health);
 
         int potion = 15;
         health += potion;
@@ -167,42 +81,66 @@ public class Main {
         System.out.println("You reach level " + level + ".");
         System.out.println("");
 
-        int hits = 3 +  weapon * 2;
+        int hits = 3 + weapon * 2;
         int swings = 7 + weapon;
         double acc1 = (double) hits / swings * 100;
         System.out.printf("Accuracy: %.1f%%%n", acc1);
         System.out.println("");
+
+        // the attack roll
+        int roll = 7;
+        int damage;
+
+        if (roll >= 9) {
+            damage = enemyPower * 2;
+            System.out.println("CRITICAL HIT");
+        } else if (roll >= 3) {
+            damage = enemyPower;
+            System.out.println("A solid hit.");
+        } else {
+            damage = 0;
+            System.out.println("You miss.");
+        }
+
+        enemyHealth -= damage;
+
+        if (enemyHealth <= 0) {
+            System.out.println("The " + enemyName + " falls");
+            alive = true;
+        } else if (health <= 0) {
+            System.out.println("You have fallen.");
+            alive = false;
+        }
 
         int turn = 6;
         boolean enrages = (turn % 3 == 0);
         System.out.println("Turn " + turn + " — enrages: " + enrages);
         System.out.println("");
 
+
+        if (health > MAX_HEALTH) {
+            health = MAX_HEALTH;
+
+        } else if (health < 0) {
+            health = 0;
+        }
+
         int bars = health / 5;
         String bar = "#".repeat(bars) + "-".repeat(20 - bars);
         System.out.printf("[%s] %d%%%n", bar, health);
+          
 
+        if(health < MAX_HEALTH / 4 && gold >= 10){
+            System.out.println("You should buy a potion.");
+        }
 
-        // TODO 4: break it on purpose, twice. Read each error, then undo it.
-        //
-        //     a) Delete your  in.nextLine();  after nextInt(). Run it. The
-        //        "Press Enter" prompt flies straight past. NO error message —
-        //        the program just skips a question. That is the worst kind of
-        //        bug and the reason the fix line gets a comment.
-        //
-        //     b) At the difficulty prompt, type a LETTER instead of a number.
-        //        InputMismatchException, and the program dies. Real validation
-        //        needs hasNextInt() and a loop — that is Lesson 8. Today you
-        //        just need to have SEEN it.
+        if(!alive || enemyHealth <= 0){
+            System.out.println("The fight is over.");
+        }
+        
+      
 
-
-        // TODO 5: design a feature of your own. Pseudocode FIRST, as a comment,
-        //         then build it. Ask the player something your game cares about
-        //         — a class, a weapon, a starting bonus — and use the answer.
-
-//  ASK for players weapon type (Sword, bow, magic)
-         // IF the type is blank(Default to sword)
-         // UPDATE damage based on weapon type
+       
 
     }
 }
