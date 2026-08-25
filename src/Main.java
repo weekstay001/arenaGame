@@ -1,131 +1,21 @@
 /*
- * U1 L6 — CONDITIONALS: if, else if, else · STARTER CODE
- * 7184 Software Development · Unit 1, Lesson 6
+ * U1 L7 — SWITCH, TERNARY, AND CODING TO SPEC · STARTER CODE
+ * 7184 Software Development · Unit 1, Lesson 7
  *
- * ALREADY HERE:  Lessons 1-5 finished — the title screen, the status line,
- *                combat math, the health bar, and a Scanner that asks the
- *                player questions.
- * YOU'RE ADDING: decisions. Until today your program ran the same way every
- *                time. Now it branches.
+ * ALREADY HERE:  Lessons 1-6 finished — the title screen, Scanner input, the
+ *                combat maths, the attack branching, and the health clamp.
+ * YOU'RE ADDING: a difficulty name from a switch EXPRESSION, a four-option
+ *                combat menu from a switch STATEMENT, and two ternaries.
  *
  *     javac Main.java
  *     java Main
  *
- * ==========================================================================
- * COMING FROM PYTHON? THREE DIFFERENCES
+ * BUILD WHAT THE SPEC SAYS, not what you would prefer. The spec sheet is on
+ * the assignment page. You will disagree with something in it — probably the
+ * 5 HP for defending. Build it anyway, then tell me why you'd change it.
  *
- *   parentheses are REQUIRED     if (health > 0)      not  if health > 0
- *   braces, not indentation      { ... }              not  a colon
- *   else if, not elif
- *
- * Indentation means NOTHING to the compiler and EVERYTHING to the next person
- * who reads your code. Keep it tidy anyway.
- *
- * ==========================================================================
- * THE NEW IDEA: SHORT-CIRCUIT EVALUATION
- *
- *     if (swings > 0 && hits / swings > 0.5) { ... }
- *
- *   If swings is 0, Java NEVER evaluates the right-hand side, so there is no
- *   divide-by-zero. && stops at the first false; || stops at the first true.
- *
- *   ORDER MATTERS. Flip those two conditions around and the program throws.
- *   Try it once, on purpose, so you have seen it.
- *
- * ==========================================================================
- * TODO 1: the attack roll — if / else if / else
- *
- *           int roll = 7;              // hard-coded on purpose; L12 makes it random
- *           int damage2;
- *
- *           if (roll >= 9) {
- *               damage2 = enemyPower * 2;
- *               System.out.println("CRITICAL HIT!");
- *           } else if (roll >= 3) {
- *               damage2 = enemyPower;
- *               System.out.println("A solid hit.");
- *           } else {
- *               damage2 = 0;
- *               System.out.println("You miss.");
- *           }
- *
- *           enemyHealth -= damage2;
- *
- *         THEN DO THIS, AND DO NOT SKIP IT:
- *         Change roll to 10, run. Change it to 5, run. Change it to 1, run.
- *         WALK ALL THREE BRANCHES. It costs two minutes, and it is the first
- *         real testing you will do in this course.
- * 
- * 
- *
- * TODO 2: the fight can now end.
- *
- *           if (enemyHealth <= 0) {
- *               System.out.println("The " + enemyName + " falls!");
- *               alive = true;
- *           } else if (health <= 0) {
- *               System.out.println("You have fallen.");
- *               alive = false;
- *           }
- *
- * TODO 3: compound conditions that mean something.
- *
- *           // The guard comes FIRST. Swap these and a zero divisor throws.
- *           if (swings > 0 && hits / swings > 0.5) {
- *               System.out.println("Your aim is holding up.");
- *           }
- *
- *           if (health < MAX_HEALTH / 4 && gold >= 10) {
- *               System.out.println("You should buy a potion.");
- *           }
- *
- *           if (!alive || enemyHealth <= 0) {
- *               System.out.println("The fight is over.");
- *           }
- *
- * TODO 4: BREAK IT ON PURPOSE — = versus ==
- *
- *         Type this and run it:
- *
- *           if (alive = false) { System.out.println("dead"); }
- *
- *         It COMPILES. It also silently sets alive to false and then does the
- *         wrong thing. One equals sign ASSIGNS; two equals signs COMPARE.
- *
- *         Now try:
- *
- *           if (health = 0) { ... }
- *
- *         That one will NOT compile, because an int is not a boolean. Which is
- *         exactly why this bug only bites you with booleans — the compiler
- *         catches every other case and stays silent on the one that matters.
- *
- *         Put both back the way they were when you are done.
- *
- * ==========================================================================
- * TODO 5: close the Lesson 4 TODO at the bottom of this file.
- *
- *         The health bar breaks when health goes above MAX_HEALTH or below 0.
- *         You have been carrying that comment for two lessons. Today you have
- *         the tool:
- *
- *           if (health > MAX_HEALTH) {
- *               health = MAX_HEALTH;
- *           } else if (health < 0) {
- *               health = 0;
- *           }
- *
- *         Test it BOTH ways — drink enough potions to go over, then take
- *         enough damage to go under. The bar has to survive both.
- *
- * ==========================================================================
- * FINISHED EARLY?
- *
- *   Write a condition that decides whether the enemy enrages, using at least
- *   two of && || and !. Then say out loud, to your partner, exactly when it
- *   is true. If you cannot say it in one sentence, it is too complicated.
- *
- * BEFORE YOU LEAVE: back up as Arena_U1L6_LastnameF and submit.
+ * TODAY IS ONE TURN. The menu runs once and the program ends. That should
+ * annoy you. Taking a second turn needs a loop, and that is Lesson 8.
  */
 
 import java.util.Scanner;
@@ -176,6 +66,26 @@ public class Main {
         int difficulty = in.nextInt();
         in.nextLine(); // consume the leftover newline. Delete this line and
                        // the "Press Enter" prompt below flies straight past.
+
+        // TODO 1: a switch EXPRESSION that turns difficulty 1/2/3 into
+        // "Easy" / "Normal" / "Brutal", then print it.
+        // Note the semicolon after the closing brace — the whole
+        // switch is the right-hand side of an assignment, so it is
+        // ONE statement and ends like one.
+        //
+        // String difficultyName = switch (difficulty) {
+        // case 1 -> "Easy";
+        // ...
+        // };
+        //
+        // Try deleting the default afterwards. It won't compile.
+
+        String difficultyName = switch (difficulty) {
+            case 1 -> "Easy";
+            case 2 -> "Normal";
+            case 3 -> "Brutal";
+            default -> "Normal";
+        };
 
         int health = MAX_HEALTH;
         int gold = STARTING_GOLD;
@@ -261,60 +171,107 @@ public class Main {
         System.out.println("Lost to the cast:     " + (critDamage - applied));
         System.out.println("");
 
-        int roll = 1;
-        int damage2;
-        if (roll >= 9) {
-            damage2 = enemyPower * 2;
-            System.out.println("CRITICAL HIT");
-        } else if (roll >= 3) {
-            damage2 = enemyPower;
-            System.out.println("A solid hit");
+        // ---------- L6 · the attack roll (keep this — it moves) ----------
+        int roll = 7;
+        int damage2 = 0;
+        int potions = 2;
 
-        } else {
-            damage2 = 0;
-            System.out.println("You miss");
+        // TODO 2: print the menu and read one action.
+        //
+        // System.out.print("[A]ttack [D]efend [P]otion [F]lee: ");
+        // String action = in.nextLine().trim().toUpperCase();
+        //
+        // .trim() kills stray spaces, .toUpperCase() means `a` works
+        // as well as `A`. Both are from Lesson 4.
+
+        System.out.print("[A]ttack  [D]efend  [P]otion  [F]lee: ");
+        String action = in.nextLine().trim().toUpperCase();
+
+        // TODO 3: a switch STATEMENT on `action`, with a case for each of
+        // A, D, P, F plus a default. Use ARROW cases (->) — they do
+        // not fall through, so you never write `break`.
+        //
+        // Your Lesson 6 attack branching (the if / else if / else on
+        // `roll`) moves INSIDE case "A". Do not rewrite it.
+        //
+        // The other three cases and the default are on the spec sheet.
+        // Follow it exactly.
+
+        switch (action) {
+            case "A" -> {
+                System.out.println("You attack");
+               
+
+            }
+
+            case "D" -> {
+                System.out.println("You block");
+            health += 5;
+
+            }
+            case "P" -> {
+                System.out.println("You drink a potion");
+                potions -= 1;
+System.out.printf("You have %d %s left.%n", potions, potions == 1 ? "potion" : "potions"); 
+            }
+            case "F" -> {
+                System.out.println("You turn and flee!");
+                alive = false;
+
+            }
+
+            default -> {
+                System.out.println("You hesitate and lose the turn.");
+                 turn -= 1;
+
+
+            }
         }
 
+        // TODO 4: two ternaries.
+        // (a) singular/plural, so one potion doesn't read "1 potions":
+        // potions == 1 ? "potion" : "potions"
+        // (b) a condition word — over half health is "steady",
+        // otherwise "faltering"
+        //
+        // A ternary chooses a VALUE. If you're choosing an ACTION,
+        // that's an if.
+
+       
         enemyHealth -= damage2;
+        System.out.printf("%s has %d HP left.%n", enemyName, enemyHealth);
 
+        // ---------- L6 · the fight can now end ----------
         if (enemyHealth <= 0) {
-
             System.out.println("The " + enemyName + " falls!");
             alive = true;
-
         } else if (health <= 0) {
-
-            System.out.println("You have fallen");
+            System.out.println("You have fallen.");
             alive = false;
-
         }
 
-        // ---------- L4 · the health bar ----------
-        // TODO clamp health between 0 and MAX_HEALTH
-        // health is 101 right now, so this prints 101% and does NOT crash
-        // (101 / 5 is 20, and 20 - 20 is 0). One more potion and repeat()
-        // throws IllegalArgumentException. The fix is an if — that is L6.
-        if (health > MAX_HEALTH) {
-            health = MAX_HEALTH;
-
-        } else if (health < 0) {
-            health = 0;
-        }
-        int bars = health / 5;
-        String bar = "#".repeat(bars) + "-".repeat(20 - bars);
-        System.out.printf("[%s] %d%%%n", bar, health);
-
+        // ---------- L6 · compound conditions ----------
+        // The guard comes FIRST. Flip these two and a zero divisor throws.
         if (swings > 0 && hits / swings > 0.5) {
             System.out.println("Your aim is holding up.");
         }
-
         if (health < MAX_HEALTH / 4 && gold >= 10) {
             System.out.println("You should buy a potion.");
         }
-
         if (!alive || enemyHealth <= 0) {
             System.out.println("The fight is over.");
         }
 
+        // ---------- L6 · the clamp, at last (the L4 TODO, closed) ----------
+        if (health > MAX_HEALTH) {
+            health = MAX_HEALTH;
+        } else if (health < 0) {
+            health = 0;
+        }
+
+        // ---------- L4 · the health bar ----------
+        int bars = health / 5;
+        String bar = "#".repeat(bars) + "-".repeat(20 - bars);
+        System.out.printf("[%s] %d%%%n", bar, health);
     }
 }
