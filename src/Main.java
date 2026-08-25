@@ -277,7 +277,6 @@ public class Main {
 
         enemyHealth -= damage2;
 
-
         if (enemyHealth <= 0) {
 
             System.out.println("The " + enemyName + " falls!");
@@ -305,17 +304,13 @@ public class Main {
         String bar = "#".repeat(bars) + "-".repeat(20 - bars);
         System.out.printf("[%s] %d%%%n", bar, health);
 
-         if (swings > 0 && hits / swings > 0.5) {
+        if (swings > 0 && hits / swings > 0.5) {
             System.out.println("Your aim is holding up.");
         }
-
-
 
         if (health < MAX_HEALTH / 4 && gold >= 10) {
             System.out.println("You should buy a potion.");
         }
-
-
 
         if (!alive || enemyHealth <= 0) {
             System.out.println("The fight is over.");
