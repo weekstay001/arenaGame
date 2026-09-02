@@ -210,18 +210,17 @@ public class Main {
             // where '@' and 'X' should land.
 
             int rows = 5, cols = 11;
-            
 
-            for(int r = 0; r < rows; r++){
-                for(int c = 0; c < cols; c++){
-                    //checks for player
-                    if (r == playerRow && c == playerCol){
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    // checks for player
+                    if (r == playerRow && c == playerCol) {
                         System.out.print('@');
-                    } else if (r == enemyRow && c == enemyCol){
+                    } else if (r == enemyRow && c == enemyCol) {
                         System.out.print('X');
-                    } else if(r == 0 || r == rows - 1){
+                    } else if (r == 0 || r == rows - 1) {
                         System.out.print('-');
-                    } else if(c == 0 || c == cols - 1){
+                    } else if (c == 0 || c == cols - 1) {
                         System.out.print('|');
                     } else {
                         System.out.print(' ');
@@ -253,8 +252,6 @@ public class Main {
             // you are fighting something on the far side of the room.
 
             boolean adjacent = (playerRow == enemyRow) && (Math.abs(playerCol - enemyCol) == 1);
-
-            
 
             int roll = (turnNumber * 3) % 10 + 1;
             int damage = 0;
