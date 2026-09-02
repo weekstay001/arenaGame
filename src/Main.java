@@ -1,18 +1,18 @@
 /*
- * U1 L8 — WHILE LOOPS AND THE GAME LOOP · STARTER CODE
- * 7184 Software Development · Unit 1, Lesson 8
+ * U1 L9 — FOR LOOPS AND NESTED LOOPS · STARTER CODE
+ * 7184 Software Development · Unit 1, Lesson 9
  *
- * ALREADY HERE:  Lessons 1-7 finished — including the combat menu and the
- *                switch that drives it.
- * YOU'RE ADDING: input validation that finally closes the Lesson 5 TODO, and
- *                a while loop that turns one turn into a whole fight.
+ * ALREADY HERE:  Lessons 1-8 finished — including the game loop, so the fight
+ *                already repeats until someone falls.
+ * YOU'RE ADDING: for loops. A banner, a countdown, and — the real work — an
+ *                arena drawn by a loop inside a loop, that your player walks
+ *                around in.
  *
  *     javac Main.java
  *     java Main
  *
- * BEFORE YOU CHANGE ANYTHING: run it and type `banana` at the difficulty
- * prompt. It dies. That has been true since Lesson 5 and there is a TODO in
- * this file that says so. Today you close it.
+ * BEFORE YOU CHANGE ANYTHING: run it. It works. Today is not about fixing
+ * something broken — it is about the console finally looking like a game.
  */
 
 import java.util.Scanner;
@@ -22,6 +22,17 @@ public class Main {
     static final int MAX_HEALTH = 100;
     static final int STARTING_GOLD = 20;
 
+    // TODO 0: the arena is 5 rows by 11 columns. Name those.
+    //
+    // Constants, not magic numbers — the nested loops below should
+    // read as "for every row, for every column", not "for 0 to 5".
+    //
+    // static final int ROWS = 5;
+    // static final int COLS = 11;
+
+    static final int ROWS = 5;
+    static final int COLS = 11;
+
     public static void main(String[] args) {
         /*
          * PSEUDOCODE — the design, before the code (D1.7)
@@ -30,11 +41,12 @@ public class Main {
          * IF the name is blank
          * USE "Challenger" instead
          * ASK for difficulty 1-3
-         * REPEAT UNTIL the answer is 1, 2, or 3 <- L8, needs do-while
+         * REPEAT UNTIL the answer is 1, 2, or 3 <- L8, done: do-while
+         * COUNT DOWN from 3 <- L9, TODO 4
+         * DRAW the arena <- L9, TODO 2
          * SHOW the menu and READ one action
-         * DO what the spec says for that action
-         * REPEAT the whole turn until someone falls <- L8, needs while
-         * SET enemy health based on difficulty
+         * MOVE, or FIGHT if the enemy is adjacent <- L9, TODO 3
+         * REPEAT the whole turn until someone falls <- L8, done: while
          * SHOW a summary and wait for Enter
          */
 
@@ -58,22 +70,19 @@ public class Main {
             playerName = "Challenger";
         }
 
+        // ---------- L8 · validated difficulty ----------
         int difficulty;
         do {
-            System.out.print("Difficulty (1 = easy, 2 = normal,  3 = brutal");
+            System.out.print("Difficulty (1 = easy, 2 = normal, 3 = brutal): ");
             while (!in.hasNextInt()) {
                 System.out.print("Numbers only. Try again: ");
-                in.next(); // throws the bad word away, if not there infinite loop!
+                in.next();
             }
-
             difficulty = in.nextInt();
-
         } while (difficulty < 1 || difficulty > 3);
-        in.nextLine(); // <- replace this line with the loop above
+        in.nextLine();
 
-        // ---------- L7 · a switch EXPRESSION — it produces a value ----------
-        // Note the arrows and the semicolon at the end. This whole switch IS
-        // the right-hand side of an assignment.
+        // ---------- L7 · a switch EXPRESSION ----------
         String difficultyName = switch (difficulty) {
             case 1 -> "Easy";
             case 2 -> "Normal";
@@ -86,6 +95,7 @@ public class Main {
         int health = MAX_HEALTH;
         int gold = STARTING_GOLD;
         int level = 1;
+        int potions = 2;
         boolean alive = true;
         double critChance = 0.15;
 
@@ -93,116 +103,178 @@ public class Main {
         int enemyHealth = 30 + difficulty * 15;
         int enemyPower = 4 + difficulty * 3;
 
+        // TODO 1: where is everybody?
+        //
+        // Four ints. Rows and columns are just numbers; the grid gets
+        // DRAWN from them, nothing is stored yet.
+        //
+        // int playerRow = 2, playerCol = 1;
+        // int enemyRow = 2, enemyCol = 9;
+        //
+        // Row 2 is the middle of five rows (0, 1, 2, 3, 4). Column 1
+        // is just inside the left wall. Work out why column 9 is just
+        // inside the right wall of an 11-wide arena.
+
+        int playerRow = 2, playerCol = 1;
+        int enemyRow = 2, enemyCol = 9;
+
+        System.out.printf("%-12s HP %3d/%3d  Gold %4d  Lv %d%n",
+                playerName, health, MAX_HEALTH, gold, level);
+        System.out.printf("Alive %-5b  Crit %.0f%%%n", alive, critChance * 100);
+        System.out.println("");
+
+        System.out.printf("%s enters the arena. The %s has %d HP.%n",
+                playerName, enemyName, enemyHealth);
+        System.out.print("Press Enter to begin...");
+        in.nextLine();
+        System.out.println("");
+
+        // TODO 4: count down from 3, then print FIGHT!
+        //
+        // Do this one first — it is four lines and it proves you have
+        // the three parts of a for loop the right way round.
+        //
+        // for (int i = 3; i > 0; i--) {
+        // System.out.println(i + "...");
+        // }
+        //
+        // START at 3. TEST that it is still above 0. STEP DOWNWARD.
+        // Get any one of the three pointing the wrong way and the loop
+        // either never runs or never stops. Try it wrong once.
+
+        for (int i = 3; i > 0; i--) {
+            System.out.println(i + "...");
+        }
+
+        System.out.println(enemyName.toUpperCase() + " blocks your path!");
+        System.out.printf("Opponent %-14s HP %3d  Power %2d%n",
+                enemyName, enemyHealth, enemyPower);
+        System.out.println("");
+
+        // ================= L8 · THE GAME LOOP =================
         int turnNumber = 1;
         boolean playing = true;
 
         while (playing) {
 
-            // ---------- L4 · one formatted line instead of six ----------
-            System.out.printf("%-12s HP %3d/%3d  Gold %4d  Lv %d%n",
-                    playerName, health, MAX_HEALTH, gold, level);
-            System.out.printf("Alive %-5b  Crit %.0f%%%n", alive, critChance * 100);
-            System.out.println("");
+            // TODO 5: a banner across the top of each turn.
+            //
+            // for (int i = 0; i < 40; i++) {
+            // System.out.print("=");
+            // }
+            // System.out.println();
+            //
+            // Then answer this honestly: "=".repeat(40) from Lesson 4
+            // does the same job in one line. Which is better HERE, and
+            // why? (A loop earns its place when each pass does
+            // something DIFFERENT. This one does not. TODO 2 does.)
 
-            System.out.printf("%s enters the arena. The %s has %d HP.%n",
-                    playerName, enemyName, enemyHealth);
-            System.out.print("Press Enter to begin...");
-            in.nextLine();
-            System.out.println("");
+            for (int i = 0; i < 40; i++) {
+                System.out.println("=");
 
-            // ---------- L4 · String methods on the enemy ----------
-            System.out.println(enemyName.toUpperCase() + " blocks your path!");
-            System.out.printf("Opponent %-14s HP %3d  Power %2d%n",
-                    enemyName, enemyHealth, enemyPower);
-            System.out.println("Name length: " + enemyName.length());
-
-            boolean isBoss = enemyName.contains("Dragon");
-            System.out.println("Boss fight: " + isBoss);
-
-            // .equals() compares the TEXT. == would compare the object reference,
-            // which is the wrong question and only works by accident.
-            if (enemyName.equalsIgnoreCase("cave goblin")) {
-                System.out.println("You have fought one of these before.");
             }
+            System.out.println();
+
+            System.out.printf("  Turn %d%n", turnNumber);
+            System.out.printf("%-12s HP %3d/%3d    %-14s HP %3d%n",
+                    playerName, health, MAX_HEALTH, enemyName, enemyHealth);
             System.out.println("");
 
-            // ---------- 1 · combat arithmetic ----------
-            int damage = enemyPower * 2;
-            health -= damage;
-            System.out.println("You take " + damage + " damage. Health: " + health);
+            // TODO 2: ***THE ARENA***. This is the lesson.
+            //
+            // A loop inside a loop. The OUTER loop walks the rows.
+            // The INNER loop walks the columns of that row. The inner
+            // loop runs COMPLETELY for each single pass of the outer.
+            //
+            // for (int r = 0; r < ROWS; r++) {
+            // for (int c = 0; c < COLS; c++) {
+            // // decide ONE character for cell (r, c)
+            // }
+            // System.out.println(); // <- END OF A ROW
+            // }
+            //
+            // Which character? In this order:
+            // player here? '@'
+            // enemy here? 'X'
+            // top or bottom row? '-'
+            // first or last column? '|'
+            // otherwise ' '
+            //
+            // THE ONE EVERYONE FORGETS is the println() after the
+            // inner loop. Leave it out and all 55 characters print on
+            // one line. If your arena is a single long stripe, that is
+            // why.
+            //
+            // Draw the grid on paper first. Label the rows 0-4 down
+            // the side and the columns 0-10 across the top, and mark
+            // where '@' and 'X' should land.
 
-            int potion = 15;
-            health += potion;
-            level++;
-            System.out.println("You drink a potion. Health: " + health);
-            System.out.println("You reach level " + level + ".");
-            System.out.println("");
+            int rows = 5, cols = 11;
+            
 
-            // ---------- 2 · the accuracy bug, then both fixes ----------
-            int hits = 3;
-            int swings = 7;
+            for(int r = 0; r < rows; r++){
+                for(int c = 0; c < cols; c++){
+                    //checks for player
+                    if (r == playerRow && c == playerCol){
+                        System.out.print('@');
+                    } else if (r == enemyRow && c == enemyCol){
+                        System.out.print('X');
+                    } else if(r == 0 || r == rows - 1){
+                        System.out.print('-');
+                    } else if(c == 0 || c == cols - 1){
+                        System.out.print('|');
+                    } else {
+                        System.out.print(' ');
+                    }
+                }
 
-            // The broken version. int / int is an int, so 3 / 7 is 0, and 0 * 100 is 0.
-            // Students TYPE THIS FIRST and run it. Seeing 0% is the lesson.
-            int brokenAccuracy = hits / swings * 100;
-            System.out.println("Accuracy (broken): " + brokenAccuracy + "%");
+                System.out.println(); // the one everyone forgets
+            }
 
-            // Fix one: cast an operand, so the division itself is done in doubles.
-            double acc1 = (double) hits / swings * 100;
+            // TODO 3: can you even reach the enemy?
+            //
+            // boolean adjacent = (playerRow == enemyRow)
+            // && (Math.abs(playerCol - enemyCol) == 1);
+            //
+            // Same row, one column apart, on either side — which is
+            // what Math.abs is doing there.
+            //
+            // Then add movement to the menu below:
+            //
+            // case "L" -> playerCol--;
+            // case "R" -> playerCol++;
+            //
+            // ...and stop the player walking through the wall. You
+            // already know how: it is the clamp from Lesson 6, in a
+            // new place. If playerCol drops below 1, put it back to 1.
+            //
+            // Finally: attacking should only work when adjacent, and
+            // the enemy should only hit back when adjacent. Otherwise
+            // you are fighting something on the far side of the room.
 
-            // Fix two: reorder so a double literal is in the maths before the divide.
-            double acc2 = hits * 100.0 / swings;
-
-            // L4 · same numbers, now readable. This is what printf is FOR.
-            System.out.printf("Accuracy (cast):    %.1f%%%n", acc1);
-            System.out.printf("Accuracy (reorder): %.1f%%%n", acc2);
-            System.out.println("");
-
-            // ---------- 3 · a rhythm with % ----------
-            int turn = 6;
-            boolean enrages = (turn % 3 == 0);
-            System.out.println("Turn " + turn + " — enrages: " + enrages);
-            System.out.println("");
-
-            // ---------- 4 · crit, and what the cast costs ----------
-            double critDamage = damage * 1.75;
-            int applied = (int) critDamage;
-            System.out.println("Crit damage (double): " + critDamage);
-            System.out.println("Crit damage (int):    " + applied);
-            System.out.println("Lost to the cast:     " + (critDamage - applied));
-            System.out.println("");
+            boolean adjacent = (playerRow == enemyRow) && (Math.abs(playerCol - enemyCol) == 1);
 
             
 
-            // ---------- L6 · the attack roll (now driven by the menu) ----------
-            // roll is still hard-coded so every branch can be walked by hand.
-            // Change it to 10, then 5, then 1 and run each time. L12 makes it random.
             int roll = (turnNumber * 3) % 10 + 1;
-            int damage2 = 0;
-            int potions = 2;
+            int damage = 0;
 
-            // ---------- L7 · the menu, implemented from the spec sheet ----------
-            System.out.println("Your move.");
-            System.out.print("[A]ttack  [D]efend  [P]otion  [F]lee: ");
+            System.out.print("[A]ttack  [D]efend  [P]otion  [F]lee Movement --> [L]eft  [R]ight");
             String action = in.nextLine().trim().toUpperCase();
 
-            // A switch STATEMENT — it does things rather than producing a value.
-            // Arrow cases do not fall through, so no break is needed anywhere.
             switch (action) {
                 case "A" -> {
                     if (roll >= 9) {
-                        damage2 = enemyPower * 2;
+                        damage = enemyPower * 2;
                         System.out.println("CRITICAL HIT!");
                     } else if (roll >= 3) {
-                        damage2 = enemyPower;
+                        damage = enemyPower;
                         System.out.println("A solid hit.");
                     } else {
-                        damage2 = 0;
                         System.out.println("You miss.");
                     }
                 }
                 case "D" -> {
-                    damage2 = 0;
                     health += 5;
                     System.out.println("You raise your guard and recover 5 HP.");
                 }
@@ -219,73 +291,54 @@ public class Main {
                     alive = false;
                     System.out.println("You run for the gate. The crowd howls.");
                 }
-                // The spec says an unknown key costs the turn. It does NOT say
-                // "ask again" — that would be a different program, and L8's loop
-                // is what makes asking again possible.
+                case "L" -> playerCol--;
+                case "R" -> playerCol++;
+
                 default -> System.out.println("The crowd jeers. You hesitate and lose the turn.");
+
             }
+
+            enemyHealth -= damage;
 
             if (alive && enemyHealth > 0) {
                 health -= enemyPower;
-                System.out.printf("The %s strikes back for %d.%n, enemyName, enemyPower");
+                System.out.printf("The %s strikes back for %d.%n", enemyName, enemyPower);
             }
 
-            // ---------- L7 · the ternary — it CHOOSES A VALUE, nothing more ----------
-            System.out.printf("You have %d %s left.%n",
-                    potions, potions == 1 ? "potion" : "potions");
-
-            String condition = health > MAX_HEALTH / 2 ? "steady" : "faltering";
-            System.out.println("You look " + condition + ".");
-            System.out.println("");
-
-            // ---------- L6 · the fight can now end ----------
-            if (enemyHealth <= 0) {
-                System.out.println("The " + enemyName + " falls!");
-                alive = true;
-            } else if (health <= 0) {
-                System.out.println("You have fallen.");
-                alive = false;
+            // ---------- L6 · the clamp ----------
+            if (health > MAX_HEALTH) {
+                health = MAX_HEALTH;
+            } else if (health < 0) {
+                health = 0;
             }
 
+            // ---------- L4 · the health bar ----------
+            int bars = health / 5;
+            String bar = "#".repeat(bars) + "-".repeat(20 - bars);
+            System.out.printf("[%s] %d%%%n", bar, health);
+
+            // ---------- the three ways this loop ends ----------
             if (!alive) {
-
+                System.out.println("You escape with your life, and nothing else.");
                 playing = false;
-
             } else if (enemyHealth <= 0) {
-
+                System.out.printf("%nThe %s falls! You win on turn %d.%n", enemyName, turnNumber);
                 playing = false;
-
             } else if (health <= 0) {
-
+                System.out.printf("%nYou have fallen on turn %d.%n", turnNumber);
+                alive = false;
                 playing = false;
-
-            }
-
-            // ---------- L6 · compound conditions ----------
-            // The guard comes FIRST. Flip these two and a zero divisor throws.
-            if (swings > 0 && hits / swings > 0.5) {
-                System.out.println("Your aim is holding up.");
-            }
-            if (health < MAX_HEALTH / 4 && gold >= 10) {
-                System.out.println("You should buy a potion.");
-            }
-            if (!alive || enemyHealth <= 0) {
-                System.out.println("The fight is over.");
             }
 
             turnNumber++;
         }
 
-        // ---------- L6 · the clamp, at last (the L4 TODO, closed) ----------
-        if (health > MAX_HEALTH) {
-            health = MAX_HEALTH;
-        } else if (health < 0) {
-            health = 0;
-        }
+        System.out.printf("%nThe arena empties after %d turns.%n", turnNumber - 1);
 
-        // ---------- L4 · the health bar ----------
-        int bars = health / 5;
-        String bar = "#".repeat(bars) + "-".repeat(20 - bars);
-        System.out.printf("[%s] %d%%%n", bar, health);
+        // FINISHED EARLY?
+        // Add a SECOND enemy at a different position and draw both.
+        // Then think about ten enemies. That is thirty variables, and you
+        // would have to touch every one of them to add an eleventh.
+        // Sit with how bad that is. Lesson 11 is the answer.
     }
 }
