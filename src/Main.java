@@ -164,7 +164,7 @@ public class Main {
         if (playerName.isEmpty()) {
             playerName = "Challenger";
         }
-int difficulty = readChoice(in, 1, 3);
+        int difficulty = readChoice(in, 1, 3);
 
         String difficultyName = switch (difficulty) {
             case 1 -> "Easy";
@@ -185,11 +185,11 @@ int difficulty = readChoice(in, 1, 3);
         int enemyPower = 4 + difficulty * 3;
 
         System.out.printf("%-12s HP %3d/%3d  Gold %4d  Lv %d%n",
-                          playerName, health, MAX_HEALTH, STARTING_GOLD, 1);
+                playerName, health, MAX_HEALTH, STARTING_GOLD, 1);
         System.out.println("");
 
         System.out.printf("%s enters the arena. The %s has %d HP.%n",
-                          playerName, enemyName, enemyHealth);
+                playerName, enemyName, enemyHealth);
         System.out.print("Press Enter to begin...");
         in.nextLine();
         System.out.println("");
@@ -206,7 +206,7 @@ int difficulty = readChoice(in, 1, 3);
             System.out.println("=".repeat(40));
             System.out.printf("  Turn %d%n", turnNumber);
             System.out.printf("%-12s HP %3d/%3d    %-14s HP %3d%n",
-                              playerName, health, MAX_HEALTH, enemyName, enemyHealth);
+                    playerName, health, MAX_HEALTH, enemyName, enemyHealth);
             System.out.println("");
 
             drawArena(playerRow, playerCol, enemyRow, enemyCol);
@@ -219,7 +219,7 @@ int difficulty = readChoice(in, 1, 3);
                 System.out.print("[A]ttack  [D]efend  [P]otion  [L]eft  [R]ight  [F]lee: ");
             } else {
                 System.out.print("The " + enemyName + " is out of reach.  "
-                                 + "[L]eft  [R]ight  [D]efend  [P]otion  [F]lee: ");
+                        + "[L]eft  [R]ight  [D]efend  [P]otion  [F]lee: ");
             }
             String action = in.nextLine().trim().toUpperCase();
 
@@ -230,9 +230,9 @@ int difficulty = readChoice(in, 1, 3);
                     } else {
                         damage = calculateDamage(enemyPower, roll);
 
-                        if (roll >= 9){
+                        if (roll >= 9) {
                             System.out.println("Critical Hit!");
-                        } else if (roll >= 3){
+                        } else if (roll >= 3) {
                             System.out.println("A solid hit");
                         } else {
                             System.out.println("You miss.");
@@ -278,8 +278,6 @@ int difficulty = readChoice(in, 1, 3);
                 default -> System.out.println("The crowd jeers. You hesitate and lose the turn.");
             }
 
-        
-
             enemyHealth = applyDamage(enemyHealth, damage);
 
             if (!fled && isAlive(enemyHealth) && adjacent) {
@@ -293,7 +291,7 @@ int difficulty = readChoice(in, 1, 3);
                 health = 0;
             }
 
-           printHealthBar(health);
+            printHealthBar(health);
 
             if (fled) {
                 System.out.println("You escape with your life, and nothing else.");
@@ -312,99 +310,108 @@ int difficulty = readChoice(in, 1, 3);
         System.out.printf("%nThe arena empties after %d turns.%n", turnNumber - 1);
     }
 
+    static void printBanner(String text) {
+        System.out.println("=".repeat(40));
+        System.out.printf(" %s%n", text);
+        System.out.println("=".repeat(40));
 
-static void printBanner(String text){
-    System.out.println("=".repeat(40));
-    System.out.printf(" %s%n", text);
-    System.out.println("=".repeat(40));
+    }
 
-}
+    static boolean isAlive(int hp) {
+        return hp > 0;
+    }
 
-static boolean isAlive(int hp){
-    return hp > 0;
-}
+    static int calculateDamage(int power, int roll) {
+        if (roll >= 9)
+            return power * 2;
+        if (roll >= 3)
+            return power;
+        return 0;
+    }
 
-static int calculateDamage(int power, int roll){
-    if (roll >= 9) return power * 2;
-    if (roll >= 3) return power;
-    return 0;
-}
+    static int calculateDamage(int power, int roll, double critMultiplier) {
+        if (roll >= 9)
+            return (int) (power * critMultiplier);
+        if (roll >= 3)
+            return power;
+        return 0;
 
-static int calculateDamage(int power, int roll, double critMultiplier){
-if (roll >= 9) return (int) (power * critMultiplier) ;
-    if (roll >= 3) return power;
-    return 0;
+    }
 
-}
+    static int readChoice(Scanner in, int min, int max) {
+        int choice;
 
+        do {
 
+            System.out.printf("Choose Difficulty %d-%d: ", min, max);
+            while (!in.hasNextInt()) {
+                in.next();
+                System.out.printf("Numbers only. Choose %d-%d: ", min, max);
+            }
 
-static int readChoice(Scanner in, int min, int max){
-    int choice;
+            choice = in.nextInt();
+            in.nextLine();
 
-    do {
+        } while (choice < min || choice > max);
+        return choice;
+    }
 
-        System.out.printf("Choose Difficulty %d-%d: ", min, max);
-        while(!in.hasNextInt()){
-            in.next();
-            System.out.printf("Numbers only. Choose %d-%d: ", min, max);
+    static int applyDamage(int hp, int damage) {
+        return hp - damage;
+    }
+
+    static int heal(int hp, int amount) {
+        return hp + amount;
+    }
+
+    static void tryToHeal(int hp) {
+        hp += 50;
+    }
+
+    static void printHealthBar(int hp) {
+        int bars = hp / 5;
+        String bar = "#".repeat(bars) + "-".repeat(20 - bars);
+        System.out.printf("[%s] %d%%%n", bar, hp);
+
+    }
+
+    static void printTitle() {
+        System.out.print("""
+                 ========================
+                        THE ARENA
+                ========================
+                """);
+
+    }
+
+    static void countdown(int from) {
+        for (int i = from; i > 0; i--) {
+            System.out.println(i + "...");
+
         }
 
-        choice = in.nextInt();
-        in.nextLine();
+        System.out.println("FIGHT!");
+        System.out.println("");
+    }
 
-    } while (choice < min || choice > max);
-    return choice;
-}
-
-static int applyDamage(int hp, int damage){return hp - damage;}
-
-static int heal(int hp, int amount){
-    return hp + amount;
-}
-
-static void tryToHeal(int hp){hp += 50;}
-
-static void printHealthBar(int hp){
-int bars = hp / 5;
-String bar = "#".repeat(bars) + "-".repeat(20 - bars);
-System.out.printf("[%s] %d%%%n", bar, hp);
-
-}
-
-static void printTitle(){
-System.out.print("""
-         ========================
-                THE ARENA
-        ========================
-        """);
-
-}
-
-static void countdown(int from){
-for(int i = from; i > 0; i--){
-    System.out.println(i + "...");
-
-
-}
-
-System.out.println("FIGHT!");
-System.out.println("");
-}
-
-static void drawArena(int playerRow, int playerCol, int enemyRow, int enemyCol){
-    for (int r = 0; r < ROWS; r++) {
-                for (int c = 0; c < COLS; c++) {
-                    if (r == playerRow && c == playerCol)      System.out.print('@');
-                    else if (r == enemyRow && c == enemyCol)   System.out.print('X');
-                    else if (r == 0 || r == ROWS - 1)          System.out.print('-');
-                    else if (c == 0 || c == COLS - 1)          System.out.print('|');
-                    else                                       System.out.print(' ');
-                }
-                System.out.println();
+    static void drawArena(int playerRow, int playerCol, int enemyRow, int enemyCol) {
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
+                if (r == playerRow && c == playerCol)
+                    System.out.print('@');
+                else if (r == enemyRow && c == enemyCol)
+                    System.out.print('X');
+                else if (r == 0 || r == ROWS - 1)
+                    System.out.print('-');
+                else if (c == 0 || c == COLS - 1)
+                    System.out.print('|');
+                else
+                    System.out.print(' ');
             }
-            System.out.println("");
+            System.out.println();
+        }
+        System.out.println("");
 
-}
+    }
 
 }
