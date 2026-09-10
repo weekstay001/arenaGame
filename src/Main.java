@@ -10,34 +10,21 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-
-        printBanner("THE CHALLENGER");
-
+        // Set up phase
+        printBanner("THE FIGHTER");
         printTitle();
-        System.out.println("Sand, torchlight, and a crowd that has already decided how this ends.");
-        System.out.println("The gate opens.");
-        System.out.println("");
+        System.out.println("Sand, torchlight, and a crowd that has already decided how this ends.\n The gate opens.\n");
 
         System.out.print("What is your name, challenger? ");
         String playerName = in.nextLine().trim();
-        if (playerName.isEmpty()) {
+        if (playerName.isEmpty())
             playerName = "Challenger";
-        }
+
         int difficulty = readChoice(in, 1, 3);
 
-        String difficultyName = switch (difficulty) {
-            case 1 -> "Easy";
-            case 2 -> "Normal";
-            case 3 -> "Brutal";
-            default -> "Unknown";
-        };
-        System.out.println("Difficulty: " + difficultyName);
-        System.out.println("");
+        printDifficultyMessage(difficulty);
 
-        int health = MAX_HEALTH;
-        int potions = 2;
-        int playerRow = 2, playerCol = 1;
-        int enemyRow = 2, enemyCol = 9;
+        int health = MAX_HEALTH, potions = 2, playerRow = 2, playerCol = 1, enemyRow = 2, enemyCol = 9;
 
         String enemyName = "Cave Goblin";
         int enemyHealth = 30 + difficulty * 15;
@@ -54,33 +41,23 @@ public class Main {
         System.out.println("");
 
         countdown(3);
-        System.out.println("FIGHT!");
-        System.out.println("");
+
+        // game loop phase
 
         int turnNumber = 1;
         boolean playing = true;
         boolean fled = false;
 
         while (playing) {
-            System.out.println("=".repeat(40));
-            System.out.printf("  Turn %d%n", turnNumber);
-            System.out.printf("%-12s HP %3d/%3d    %-14s HP %3d%n",
-                    playerName, health, MAX_HEALTH, enemyName, enemyHealth);
-            System.out.println("");
 
+            printTurnHeader(turnNumber, playerName, health, enemyName, enemyHealth);
             drawArena(playerRow, playerCol, enemyRow, enemyCol);
 
             boolean adjacent = (playerRow == enemyRow) && (Math.abs(playerCol - enemyCol) == 1);
+
+            String action = promptAction(in, enemyName, adjacent);
             int roll = (turnNumber * 3) % 10 + 1;
             int damage = 0;
-
-            if (adjacent) {
-                System.out.print("[A]ttack  [D]efend  [P]otion  [L]eft  [R]ight  [F]lee: ");
-            } else {
-                System.out.print("The " + enemyName + " is out of reach.  "
-                        + "[L]eft  [R]ight  [D]efend  [P]otion  [F]lee: ");
-            }
-            String action = in.nextLine().trim().toUpperCase();
 
             switch (action) {
                 case "A" -> {
@@ -144,24 +121,10 @@ public class Main {
                 System.out.printf("The %s strikes back for %d.%n", enemyName, enemyPower);
             }
 
-            if (health > MAX_HEALTH) {
-                health = MAX_HEALTH;
-            } else if (health < 0) {
-                health = 0;
-            }
-
+            health = clampHealth(health);
             printHealthBar(health);
 
-            if (fled) {
-                System.out.println("You escape with your life, and nothing else.");
-                playing = false;
-            } else if (!isAlive(enemyHealth)) {
-                System.out.printf("%nThe %s falls! You win on turn %d.%n", enemyName, turnNumber);
-                playing = false;
-            } else if (!isAlive(health)) {
-                System.out.printf("%nYou have fallen on turn %d.%n", turnNumber);
-                playing = false;
-            }
+            playing = checkGameOver(fled, health, enemyHealth, enemyName, turnNumber);
 
             turnNumber++;
         }
@@ -169,6 +132,7 @@ public class Main {
         System.out.printf("%nThe arena empties after %d turns.%n", turnNumber - 1);
     }
 
+    // REFACTOR
     static void printBanner(String text) {
         System.out.println("=".repeat(40));
         System.out.printf(" %s%n", text);
@@ -273,4 +237,54 @@ public class Main {
 
     }
 
+    static void printTurnHeader(int turn, String pName, int pHp, String eName, int eHp) {
+        System.out.println("=".repeat(40));
+        System.out.printf("  Turn %d%n", turn);
+        System.out.printf("%-12s HP %3d/%3d    %-14s HP %3d%n%n",
+                pName, pHp, MAX_HEALTH, eName, eHp);
+
+    }
+
+    static String promptAction(Scanner in, String enemyName, boolean adjacent) {
+        if (adjacent) {
+            System.out.print("[A]ttack  [D]efend  [P]otion  [L]eft  [R]ight  [F]lee: ");
+        } else {
+            System.out.print("The " + enemyName + " is out of reach.   [L]eft  [R]ight  [D]efend  [P]otion  [F]lee: ");
+        }
+        return in.nextLine().trim().toUpperCase();
+    }
+
+    static void printDifficultyMessage(int difficulty) {
+        String difficultyName = switch (difficulty) {
+            case 1 -> "Easy";
+            case 2 -> "Normal";
+            case 3 -> "Brutal";
+            default -> "Unknown";
+        };
+
+        System.out.println("Difficulty: " + difficultyName + "\n");
+    }
+
+    static int clampHealth(int health) {
+        if (health > MAX_HEALTH)
+            return MAX_HEALTH;
+        if (health < 0)
+            return 0;
+        return health;
+    }
+
+    static boolean checkGameOver(boolean fled, int health, int enemyHealth, String enemyName, int turnNumber) {
+
+        if (fled) {
+            System.out.println("You escape with your life, and nothing else.");
+            return false;
+        } else if (!isAlive(enemyHealth)) {
+            System.out.printf("%nThe %s falls! You win on turn %d.%n", enemyName, turnNumber);
+            return false;
+        } else if (!isAlive(health)) {
+            System.out.printf("%nYou have fallen on turn %d.%n", turnNumber);
+            return false;
+        }
+        return true;
+    }
 }
